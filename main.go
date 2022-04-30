@@ -7,6 +7,9 @@ import (
 	"log"
 	"os"
 	"sort"
+
+	"github.com/go-echarts/go-echarts/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
 type Count struct {
@@ -19,6 +22,24 @@ type CountList []Count
 func (c CountList) Len() int           { return len(c) }
 func (c CountList) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
 func (c CountList) Less(i, j int) bool { return c[i].Value < c[j].Value }
+
+func generateBarItems(data CountList) []opts.BarData {
+	barData := []int{}
+	items := make([]opts.BarData, 0)
+
+	for i := 0; i <= 4; i++ {
+		barData = append(barData, data[i].Value)
+
+	}
+
+	for _, v := range barData {
+		items = append(items, opts.BarData{Value: v})
+	}
+
+	return items
+
+}
+
 func main() {
 
 	// csv reading
@@ -69,4 +90,14 @@ func main() {
 
 	sort.Sort(sort.Reverse(count)) // sort in descending order
 	fmt.Println(count)
+
+	// create a new bar instance
+	bar := charts.NewBar()
+	bar.SetXAxis([]string{
+		count[0].Key[:4],
+		count[1].Key[:4],
+		count[2].Key[:4],
+		count[3].Key[:4],
+		count[4].Key[:4],
+	}).AddSeries("Values", generateBarItems)
 }
